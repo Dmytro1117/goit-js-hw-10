@@ -3,7 +3,7 @@ import { fetchCountries } from "./fetchCountries"
 import lodashDebounce from "lodash.debounce"
 import Notiflix from 'notiflix';
 
-const DEBOUNCE_DELAY = 1000;
+const DEBOUNCE_DELAY = 300;
 
 const listEl = document.querySelector('.country-list');
 const divEl = document.querySelector('.country-info');
@@ -21,59 +21,51 @@ function handleInput(e) {
     return fetchCountries(choseCountry)
         .then(data => { choseRender(data) })
         .catch(fetchError)
-         .finally(()=>{})
+        // .finally(()=>{})
 }
 
 function choseRender(arr) {
     if (arr.length === 1) {
-         listEl.innerHTML = '';
-    return renderCountriesList(arr);
+    return renderCountriesDiv(arr);
   }
     if (arr.length > 1 && arr.length <= 10) {
-       divEl.innerHTML = '';
-   return renderCountriesDiv(arr);
+   return renderCountriesList(arr);
   }
      return Notiflix.Notify.info(
     'Too many matches found. Please enter a more specific name.'
   );
 }
 
-function renderCountriesDiv(data) {
-    const { name, capital, population, flags, languages } = data[0]
-    const markup = `<li class="country-item">
-            <img src="${flags.svg}" alt="${name.official}" width="40" height="20" /> 
-            <span>${name.official}</span>
-            </li>`;
-//  const markup = `<p>Country: ${name.official}</p>
-//         <img src="${flags.svg}" width="200" height="100"}>
-//         <p>Population: ${population}</p>`
-//          console.log(markup)
+function renderCountriesList(data) {
+    const markup = data
+    .map(counrt => {
+      return `<li class="country-item">
+            <img src="${counrt.flags.svg}" alt="${counrt.name.official}" width="60" height="30" /> 
+            <span>${counrt.name.official}</span>
+            </li>`}).join('');
   listEl.innerHTML = markup;
  }
 
-function renderCountriesList(data) { 
-    const markup = data
-    .map(el => {
-      return `<h1>
-       <img src="${el.flags.svg}" alt="${el.name.official}" width="100" height="50" /> 
-        ${el.name.official}
+function renderCountriesDiv(data) { 
+   const { name, capital, population, flags, languages } = data[0]
+    const markup = `<h1>
+       <img src="${flags.svg}" alt="${name.official}" width="100" height="50" /> 
+        ${name.official}
       </h1>
       <ul class="country-info_list">
         <li class="country-info_item">
           <h2>Capital:</h2>
-          <p>${el.capital}</p>
+          <p>${capital}</p>
         </li>
         <li class="country-info_item">
           <h2>Population:</h2>
-          <p>${el.population}</p>
+          <p>${population}</p>
         </li>
         <li class="country-info_item">
           <h2>Languages:</h2>
-          <p>${Object.values(el.languages).join(', ')}</p>
+          <p>${Object.values(languages).join(', ')}</p>
         </li>
       </ul>`;
-    }).join('');
-    
     divEl.innerHTML = markup;
 }
 
@@ -81,6 +73,10 @@ function fetchError() {
     // alert("Халепа")
     Notiflix.Notify.failure("Oops, there is no country with that name");
 }
+
+
+
+
 
 
 
