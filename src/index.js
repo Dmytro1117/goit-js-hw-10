@@ -11,7 +11,6 @@ const inputEl = document.querySelector('#search-box');
 
 listEl.style.listStyle = 'none';
 
-
 inputEl.addEventListener("input", lodashDebounce(handleInput, DEBOUNCE_DELAY))
 
 function handleInput(e) {
